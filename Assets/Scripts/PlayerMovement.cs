@@ -11,8 +11,11 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement info")]
     [SerializeField] private float walkSpeed;
+    [SerializeField] private float runSpeed;
+    private float speed;
     public Vector3 movementDirection;
     private float verticalVelocity;
+    private bool isRunning;
 
     [Header("Aim info")]
     [SerializeField] private Transform aim;
@@ -32,6 +35,9 @@ public class PlayerMovement : MonoBehaviour
         controlls.Character.Movement.canceled += context => moveInput = Vector2.zero;
         controlls.Character.Aim.performed += context => aimInput = context.ReadValue<Vector2>();
         controlls.Character.Aim.canceled += context => aimInput = Vector2.zero;
+
+        controlls.Character.Run.performed += context => isRunning=true;
+        controlls.Character.Aim.canceled += context => isRunning =false;
     }
 
     private void Start()
@@ -54,7 +60,8 @@ public class PlayerMovement : MonoBehaviour
         float zVelocity = Vector3.Dot(movementDirection.normalized, transform.forward);
 
         animator.SetFloat("xVelocity", xVelocity, .1f, Time.deltaTime);
-        animator.SetFloat("zVelocity", zVelocity, .1f, Time.deltaTime);  
+        animator.SetFloat("zVelocity", zVelocity, .1f, Time.deltaTime);
+        animator.SetBool("isRunning", isRunning);
 
     }
 
