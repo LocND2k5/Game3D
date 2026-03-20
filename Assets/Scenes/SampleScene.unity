@@ -1865,6 +1865,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   walkSpeed: 1.5
+  runSpeed: 3
   movementDirection: {x: 0, y: 0, z: 0}
   aim: {fileID: 1359237495}
   aimLayerMask:

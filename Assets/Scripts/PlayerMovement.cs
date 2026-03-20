@@ -30,20 +30,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        controlls = new PlayerControlls();
-        controlls.Character.Movement.performed += context => moveInput = context.ReadValue<Vector2>();
-        controlls.Character.Movement.canceled += context => moveInput = Vector2.zero;
-        controlls.Character.Aim.performed += context => aimInput = context.ReadValue<Vector2>();
-        controlls.Character.Aim.canceled += context => aimInput = Vector2.zero;
-
-        controlls.Character.Run.performed += context => isRunning=true;
-        controlls.Character.Aim.canceled += context => isRunning =false;
+        AssignInputEvents();
     }
 
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
+        speed= walkSpeed;
     }
 
     private void Update()
@@ -61,7 +55,9 @@ public class PlayerMovement : MonoBehaviour
 
         animator.SetFloat("xVelocity", xVelocity, .1f, Time.deltaTime);
         animator.SetFloat("zVelocity", zVelocity, .1f, Time.deltaTime);
-        animator.SetBool("isRunning", isRunning);
+
+        bool playRunAnimation = isRunning && movementDirection.magnitude > 0;
+        animator.SetBool("isRunning", playRunAnimation);
 
     }
 
@@ -85,7 +81,7 @@ public class PlayerMovement : MonoBehaviour
         ApplyGravity();
         if (movementDirection.magnitude > 0)
         {
-            characterController.Move(movementDirection * Time.deltaTime * walkSpeed);
+            characterController.Move(movementDirection * Time.deltaTime * speed);
         }
     }
 
@@ -103,6 +99,28 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    #region New Input System
+    private void AssignInputEvents()
+    {
+        controlls = new PlayerControlls();
+        controlls.Character.Movement.performed += context => moveInput = context.ReadValue<Vector2>();
+        controlls.Character.Movement.canceled += context => moveInput = Vector2.zero;
+        controlls.Character.Aim.performed += context => aimInput = context.ReadValue<Vector2>();
+        controlls.Character.Aim.canceled += context => aimInput = Vector2.zero;
+
+        controlls.Character.Run.performed += context =>
+        {
+           
+                speed = runSpeed;
+                isRunning = true;
+
+        };
+        controlls.Character.Aim.canceled += context =>
+        {
+            speed = walkSpeed;
+            isRunning = false;
+        };
+    }
     private void OnEnable()
     {
         controlls.Enable();
@@ -112,4 +130,5 @@ public class PlayerMovement : MonoBehaviour
     {
         controlls.Disable();    
     }
+    #endregion
 }
