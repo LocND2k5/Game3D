@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float walkSpeed;
     [SerializeField] private float runSpeed;
     private float speed;
-    public Vector3 movementDirection;
+    private Vector3 movementDirection;
     private float verticalVelocity;
     private bool isRunning;
 
@@ -74,7 +74,7 @@ public class PlayerMovement : MonoBehaviour
 
             transform.forward = lookingDirection;
 
-            aim.position=new Vector3(hitInfo.point.x, transform.position.y, hitInfo.point.z);
+            aim.position=new Vector3(hitInfo.point.x, transform.position.y +1, hitInfo.point.z);
         }
     }
     private void ApplyMovement()
@@ -122,7 +122,7 @@ public class PlayerMovement : MonoBehaviour
             }
 
         };
-        controlls.Character.Aim.canceled += context =>
+        controlls.Character.Run.canceled += context =>
         {
             speed = walkSpeed;
             isRunning = false;
