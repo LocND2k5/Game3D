@@ -8,10 +8,13 @@ public class Player : MonoBehaviour
 
     public PlayerAim aim {  get; private set; }
 
+    public PlayerMovement movement { get; private set; }
+
     private void Awake()
     {
         controlls= new PlayerControlls();
         aim = GetComponent<PlayerAim>();
+        movement = GetComponent<PlayerMovement>();
     }
 
     private void OnEnable()
