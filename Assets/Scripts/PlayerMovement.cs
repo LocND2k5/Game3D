@@ -15,21 +15,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float walkSpeed;
     [SerializeField] private float runSpeed;
     private float speed;
-    private Vector3 movementDirection;
     private float verticalVelocity;
-    private bool isRunning;
 
-    [Header("Aim info")]
-    [SerializeField] private Transform aim;
-    [SerializeField] private LayerMask aimLayerMask;
-    private Vector3 lookingDirection;
-
-    
-
+    private Vector3 movementDirection;
     private Vector2 moveInput;
-    private Vector2 aimInput;
-
-
+    private bool isRunning;
 
     private void Start()
     {
@@ -43,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         ApplyMovement();
-        AimTowardsMouse();
+        ApplyRotation();
         AnimatorControllers();
         
     }
@@ -63,19 +53,16 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    private void AimTowardsMouse()
+    private void ApplyRotation()
     {
-        Ray ray = Camera.main.ScreenPointToRay(aimInput);
-        if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, aimLayerMask))
-        {
-            lookingDirection = hitInfo.point - transform.position;
+        
+            Vector3 lookingDirection = player.aim.GetMousePosition() - transform.position;
             lookingDirection.y = 0f;
             lookingDirection.Normalize();
 
             transform.forward = lookingDirection;
 
-            aim.position=new Vector3(hitInfo.point.x, transform.position.y +1, hitInfo.point.z);
-        }
+         
     }
     private void ApplyMovement()
     {
@@ -109,8 +96,7 @@ public class PlayerMovement : MonoBehaviour
         
         controlls.Character.Movement.performed += context => moveInput = context.ReadValue<Vector2>();
         controlls.Character.Movement.canceled += context => moveInput = Vector2.zero;
-        controlls.Character.Aim.performed += context => aimInput = context.ReadValue<Vector2>();
-        controlls.Character.Aim.canceled += context => aimInput = Vector2.zero;
+        
 
         controlls.Character.Run.performed += context =>
         {
